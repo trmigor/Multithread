@@ -1,3 +1,5 @@
+#include <cstdint>
+
 #ifndef S_LOCK
 #define S_LOCK
 
