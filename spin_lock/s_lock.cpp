@@ -1,5 +1,5 @@
 #include "s_lock.hpp"
-#include <stdlib.h>
+#include <cstdlib>
 
 s_lock* spin_init(void) {
     s_lock *lock = (s_lock*) malloc(sizeof(s_lock));
