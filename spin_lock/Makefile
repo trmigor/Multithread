@@ -1,9 +1,12 @@
-out-64: main.o spin_lock.o spin_unlock.o
-	g++ -o out-64 main.o spin_lock.o spin_unlock.o
+out-64: main.o spin_init.o spin_lock.o spin_unlock.o
+	g++ -o out-64 main.o spin_init.o spin_lock.o spin_unlock.o
 	make clean
 
 main.o:
 	g++ -c -o main.o main.cpp
+
+spin_init.o:
+	g++ -c -o spin_init.o spin_init.s
 
 spin_lock.o:
 	g++ -c -o spin_lock.o spin_lock.s
