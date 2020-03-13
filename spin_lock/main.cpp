@@ -1,12 +1,5 @@
 #include <iostream>
-
-typedef long s_lock;
-
-extern "C" {
-    s_lock* spin_init(s_lock *lock);
-    void spin_lock(s_lock *lock);
-    void spin_unlock(s_lock *lock);
-}
+#include "s_lock.hpp"
 
 int main(void) {
     s_lock a;
