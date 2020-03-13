@@ -2,9 +2,11 @@
 
 typedef long s_lock;
 
-extern "C" s_lock* spin_init(s_lock *lock);
-extern "C" void spin_lock(s_lock *lock);
-extern "C" void spin_unlock(s_lock *lock);
+extern "C" {
+    s_lock* spin_init(s_lock *lock);
+    void spin_lock(s_lock *lock);
+    void spin_unlock(s_lock *lock);
+}
 
 int main(void) {
     s_lock a;
