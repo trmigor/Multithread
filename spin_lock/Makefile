@@ -1,20 +1,23 @@
-CPPFLAGS = -Wall -Wextra -pedantic -std=c++17 -O3 -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -fsanitize=address,undefined -fno-sanitize-recover=all -fstack-protector
+CPPFLAGS = -I include -Wall -Wextra -pedantic -std=c++17 -O3 -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -fsanitize=address,undefined -fno-sanitize-recover=all -fstack-protector
 
-out-64: main.o s_lock.o spin_lock.o spin_unlock.o
-	g++ $(CPPFLAGS) -o out-64 main.o s_lock.o spin_lock.o spin_unlock.o
+out-64: build build/main.o build/s_lock.o build/spin_lock.o build/spin_unlock.o
+	g++ $(CPPFLAGS) -o build/out-64 build/main.o build/s_lock.o build/spin_lock.o build/spin_unlock.o
 	make clean
 
-main.o:
-	g++ $(CPPFLAGS) -c -o main.o main.cpp
+build/main.o:
+	g++ $(CPPFLAGS) -c -o build/main.o source/main.cpp
 
-s_lock.o:
-	g++ $(CPPFLAGS) -c -o s_lock.o s_lock.cpp
+build/s_lock.o:
+	g++ $(CPPFLAGS) -c -o build/s_lock.o source/s_lock.cpp
 
-spin_lock.o:
-	g++ $(CPPFLAGS) -c -o spin_lock.o spin_lock.s
+build/spin_lock.o:
+	g++ $(CPPFLAGS) -c -o build/spin_lock.o source/spin_lock.s
 
-spin_unlock.o:
-	g++ $(CPPFLAGS) -c -o spin_unlock.o spin_unlock.s
+build/spin_unlock.o:
+	g++ $(CPPFLAGS) -c -o build/spin_unlock.o source/spin_unlock.s
+
+build:
+	mkdir build
 
 clean:
-	rm -rf *.o *.out
+	rm -rf build/*.o build/*.out
