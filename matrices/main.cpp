@@ -5,14 +5,12 @@
 #include <chrono>
 #include <fstream>
 
-#define forn(i, n) for(size_t i = 0; i < size_t(n); ++i)
-#define forf(i, n1, n2) for(size_t i = size_t(n1); i < size_t(n2); ++i)
-
-#define NUM_THR 100
+#define forn(i, n) for (size_t i = 0; i < size_t(n); ++i)
+#define forf(i, n1, n2) for (size_t i = size_t(n1); i < size_t(n2); ++i)
 
 typedef std::vector<double> __vector;
 typedef std::vector<__vector> __matrix;
-typedef std::pair<size_t, size_t> __m_size_t; 
+typedef std::pair<size_t, size_t> __m_size_t;
 
 double operator*(const __vector& left, const __vector& right) {
     if (left.size() != right.size()) {
@@ -36,7 +34,7 @@ std::ostream& operator<<(std::ostream& os, __vector to_print) {
 }
 
 class Matrix {
-    private: 
+    private:
         __matrix val_;
         size_t rows_;
         size_t cols_;
@@ -52,13 +50,13 @@ class Matrix {
             const size_t lefti;
             const size_t righti;
             __matrix& res;
-        }; 
+        };
 
-        Matrix(size_t rows, size_t cols = 0, size_t num_threads = 1) :
+        explicit Matrix(size_t rows, size_t cols = 0, size_t num_threads = 1) :
                 val_(__matrix(rows, __vector(cols, 0))),
                 rows_(rows), cols_(cols), nThreads_(num_threads) {}
 
-        Matrix(const __matrix& val) : val_(val), rows_(val.size()) {
+        explicit Matrix(const __matrix& val) : val_(val), rows_(val.size()) {
             if (rows_ != 0) {
                 cols_ = val[0].size();
             } else {
@@ -97,7 +95,7 @@ class Matrix {
 };
 
 void threadMultiplyJob(Matrix::__thr_m_j_input in) {
-    forf (i, in.lefti, in.righti) {
+    forf(i, in.lefti, in.righti) {
         forn(j, in.tright.Rows()) {
             in.res[i][j] = in.left[i] * in.tright[j];
         }
@@ -172,7 +170,7 @@ int main(int argc, char *argv[]) {
         std::chrono::duration<double> elapsed = end - start;
         res += elapsed.count();
     }
-    
+
     std::cout << num_threads << " " << m_size << " " << res / many << std::endl;
 
     return 0;
