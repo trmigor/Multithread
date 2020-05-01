@@ -18,9 +18,9 @@ build/spin_unlock.o: source/spin_unlock.s
 
 lib: build build/s_lock.o build/spin_lock.o build/spin_unlock.o
 	mkdir lib
-	ar rc lib/libspinlock.a build/*.o
+	ar rc lib/libspinlock.a build/s_lock.o build/spin_lock.o build/spin_unlock.o
 	ranlib lib/libspinlock.a
-	gcc -shared -o lib/libspinlock.so build/*.o
+	g++ -shared -o lib/libspinlock.so build/s_lock.o build/spin_lock.o build/spin_unlock.o
 
 clean:
 	rm -rf build/ lib/

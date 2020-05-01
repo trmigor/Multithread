@@ -18,9 +18,9 @@ build/ticket_unlock.o: source/ticket_unlock.s
 
 lib: build build/t_lock.o build/ticket_lock.o build/ticket_unlock.o
 	mkdir lib
-	ar rc lib/libticketlock.a build/*.o
+	ar rc lib/libticketlock.a build/t_lock.o build/ticket_lock.o build/ticket_unlock.o
 	ranlib lib/libticketlock.a
-	gcc -shared -o lib/libticketlock.so build/*.o
+	g++ -shared -o lib/libticketlock.so build/t_lock.o build/ticket_lock.o build/ticket_unlock.o
 
 clean:
 	rm -rf build/ lib/
