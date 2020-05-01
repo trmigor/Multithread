@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 s_lock* spin_init(void) {
-    s_lock *lock = (s_lock*) malloc(sizeof(s_lock));
+    s_lock *lock = reinterpret_cast<s_lock*>(malloc(sizeof(s_lock)));
     *lock = 0;
     return lock;
 }
