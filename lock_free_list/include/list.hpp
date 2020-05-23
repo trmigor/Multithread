@@ -145,15 +145,15 @@ class list {
         // Constructors
         //
 
-        explicit list(size_t num_threads = 1, size_t hazard_ptr_allowed = 1) :
-                size_(0), num_threads_(num_threads),
+        explicit list(size_t hazard_ptr_allowed = 1) :
+                size_(0), num_threads_(1),
                 hazard_ptr_allowed_(hazard_ptr_allowed) {
             init_();
         }
 
-        explicit list(size_type n, const value_type& val = value_type(),
-                size_t num_threads = 1, size_t hazard_ptr_allowed = 1) :
-                    size_(n), num_threads_(num_threads),
+        explicit list(size_type n, const value_type& val,
+                size_t hazard_ptr_allowed = 1) :
+                    size_(n), num_threads_(1),
                     hazard_ptr_allowed_(hazard_ptr_allowed) {
             init_();
             for (size_type i = 0; i < n; ++i) {
@@ -165,10 +165,10 @@ class list {
 
         template <class InputIterator>
         list(InputIterator first, InputIterator last,
-                size_t num_threads = 1, size_t hazard_ptr_allowed = 1,
+                size_t hazard_ptr_allowed = 1,
                 typename std::enable_if
                 <std::__is_input_iterator<InputIterator>::value>::type* = 0) :
-                    num_threads_(num_threads),
+                    num_threads_(1),
                     hazard_ptr_allowed_(hazard_ptr_allowed) {
             init_();
             size_t i = 0;
@@ -194,6 +194,8 @@ class list {
             size_ = i;
             num_threads_ = x.num_threads_;
             hazard_ptr_allowed_ = x.hazard_ptr_allowed_;
+            hazard_ptrs_ = x.hazard_ptrs_;
+            retire_ = x.retire_;
         }
 
         list(list&& x) {
@@ -202,6 +204,8 @@ class list {
             size_.store(x.size_);
             num_threads_ = x.num_threads_;
             hazard_ptr_allowed_ = x.hazard_ptr_allowed_;
+            hazard_ptrs_ = x.hazard_ptrs_;
+            retire_ = x.retire_;
         }
 
         list(std::initializer_list<value_type> il,
@@ -251,6 +255,8 @@ class list {
             size_ = x.size_;
             num_threads_ = x.num_threads_;
             hazard_ptr_allowed_ = x.hazard_ptr_allowed_;
+            hazard_ptrs_ = x.hazard_ptrs_;
+            retire_ = x.retire_;
 
             return *this;
         }
@@ -411,6 +417,10 @@ class list {
             bool done = false;
             while (!done) {
                 curr = head_->next.load(std::memory_order_relaxed);
+                if (curr == tail_) {
+                    throw ExceptEmptyList;
+                    return;
+                }
                 node* next = curr->next;
                 done = head_->next.compare_exchange_weak(curr, next,
                     std::memory_order_relaxed);
@@ -447,11 +457,14 @@ class list {
         //
 
         void thread_attach() {
+            attach_lock.lock();
             std::thread::id my_id = std::this_thread::get_id();
             hazard_ptrs_.insert(std::pair<std::thread::id, std::vector<node*>>(
                 my_id, std::vector<node*>(0)));
             retire_.insert(std::pair<std::thread::id, std::vector<node*>>(
                 my_id, std::vector<node*>(0)));
+            ++num_threads_;
+            attach_lock.unlock();
         }
 
         void set_hazard(node* which) {
@@ -476,8 +489,8 @@ class list {
             hazard_ptrs_[my_id].pop_back();
         }
 
-        void set_num_threads(size_t num_threads) {
-            num_threads_ = num_threads;
+        void reset_num_threads() {
+            num_threads_ = 1;
             hazard_ptrs_.clear();
             retire_.clear();
         }
@@ -491,6 +504,7 @@ class list {
         size_t hazard_ptr_allowed_;
         std::map<std::thread::id, std::vector<node*>> hazard_ptrs_;
         std::map<std::thread::id, std::vector<node*>> retire_;
+        std::mutex attach_lock;
 
         void init_() {
             head_ = new node;
@@ -504,6 +518,7 @@ class list {
         void scan_() {
             std::vector<node*> all_hazard;
             for (auto e : hazard_ptrs_) {
+                std::cout << e.first << std::endl;
                 for (auto curr : e.second) {
                     all_hazard.push_back(curr);
                 }

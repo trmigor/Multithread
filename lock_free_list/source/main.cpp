@@ -44,7 +44,7 @@ void thr_job_ABA(list::list<int>* numbers) {
 }
 
 int main(void) {
-    list::list<int> numbers(static_cast<size_t>(10), static_cast<size_t>(1));
+    list::list<int> numbers(static_cast<size_t>(1));
 
     std::vector<std::thread> threads;
     for (size_t i = 0; i < 10; ++i) {
@@ -71,7 +71,7 @@ int main(void) {
     std::cout << std::endl;
 
     numbers.clear();
-    numbers.set_num_threads(2);
+    numbers.reset_num_threads();
     std::cout << numbers.size() << std::endl;
     for (auto e : numbers) {
         std::cout << e << " ";
