@@ -373,7 +373,7 @@ class list {
         void push_front(const value_type& val) {
             std::stringstream s;
             s << "Push(" << val << ")"<< std::endl;
-            std::cout << s.str();
+            // std::cout << s.str();
 
             node* new_node = new node;
             new_node->value = val;
@@ -392,7 +392,7 @@ class list {
         void push_front(value_type&& val) {
             std::stringstream s;
             s << "Push(" << val << ")"<< std::endl;
-            std::cout << s.str();
+            // std::cout << s.str();
 
             node* new_node = new node;
             new_node->value = val;
@@ -427,7 +427,7 @@ class list {
             }
             std::stringstream s;
             s << "Pop(" << curr->value << ")"<< std::endl;
-            std::cout << s.str();
+            // std::cout << s.str();
             size_.fetch_sub(1, std::memory_order_relaxed);
             retire_node_(curr);
         }
@@ -516,7 +516,7 @@ class list {
         }
 
         void scan_() {
-            std::cout << "scan_()" << std::endl;
+            // std::cout << "scan_()" << std::endl;
             std::vector<node*> all_hazard;
             for (auto e : hazard_ptrs_) {
                 for (auto curr : e.second) {
