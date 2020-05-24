@@ -40,6 +40,8 @@ void thr_job_ABA(list::list<int>* numbers) {
     numbers->pop_front();
     numbers->pop_front();
     numbers->pop_front();
+    numbers->pop_front();
+    numbers->pop_front();
     numbers->push_front(1);
 }
 

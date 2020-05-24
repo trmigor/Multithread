@@ -516,9 +516,9 @@ class list {
         }
 
         void scan_() {
+            std::cout << "scan_()" << std::endl;
             std::vector<node*> all_hazard;
             for (auto e : hazard_ptrs_) {
-                std::cout << e.first << std::endl;
                 for (auto curr : e.second) {
                     all_hazard.push_back(curr);
                 }
